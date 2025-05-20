@@ -1,22 +1,21 @@
 package com.example.demo2.Model;
 
-
-
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalTime;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class Horario {
 
-public class Horario {  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-     private int id;
-    private DiaSemanaEnum dia;
-    private LocalTime horaInicio;
-    private LocalTime horaFin;
-
-    
+    private String dia;        // Ej: "Lunes"
+    private String horaInicio; // Ej: "08:00"
+    private String horaFin;    // Ej: "10:00"
 }
