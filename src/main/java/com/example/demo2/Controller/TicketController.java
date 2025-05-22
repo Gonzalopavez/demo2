@@ -1,9 +1,11 @@
 package com.example.demo2.Controller;
 
+import com.example.demo2.Model.EstadoTicketEnum;
 import com.example.demo2.Model.Ticket;
 import com.example.demo2.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.Date;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +17,48 @@ public class TicketController {
     @Autowired
     private TicketRepository ticketRepository;
 
+
+    @PutMapping("/{id}/atender")
+public Ticket atenderTicket(@PathVariable int id) {
+    return ticketRepository.findById(id).map(ticket -> {
+        ticket.setEstado(EstadoTicketEnum.EN_PROGRESO);
+        return ticketRepository.save(ticket);
+    }).orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+
+
+
+}
+
+
+
+@PutMapping("/{id}/abrir")
+public Ticket abrirTicket(@PathVariable int id) {
+    return ticketRepository.findById(id).map(ticket -> {
+        ticket.setEstado(EstadoTicketEnum.ABIERTO);
+        return ticketRepository.save(ticket);
+    }).orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+}
+
+
+
+
+
+@PutMapping("/{id}/cerrar")
+public Ticket cerrarTicket(@PathVariable int id) {
+    return ticketRepository.findById(id).map(ticket -> {
+        ticket.setEstado(EstadoTicketEnum.CERRADO);
+        ticket.setFechaResolucion(new Date());
+        return ticketRepository.save(ticket);
+    }).orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+}
+
+
+
+
+
+
     // AQUI SE PUEDEN VER TODOS LOS TICKETS
+
 
 
     @GetMapping

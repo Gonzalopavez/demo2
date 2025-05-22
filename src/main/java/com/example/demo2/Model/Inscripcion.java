@@ -1,94 +1,60 @@
 package com.example.demo2.Model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Inscripcion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private int idEstudiante;
     private int idCurso;
+
+    @Temporal(TemporalType.DATE)
     private Date fechaInscripcion;
-    private EstadoInscripcionEnum estado;
 
-    // constructor con parámetros
+    @OneToOne(cascade = CascadeType.ALL)
+    private EstadoInscripcion estado;
 
-    public Inscripcion(int id, int idEstudiante, int idCurso, Date fechaInscripcion, EstadoInscripcionEnum estado) {
-        this.id = id;
-        this.idEstudiante = idEstudiante;
-        this.idCurso = idCurso;
-        this.fechaInscripcion = fechaInscripcion;
-        this.estado = estado;
-    }
-
-    
-
-    //aqui abajo los getters y setters
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getIdEstudiante() {
-        return idEstudiante;
-    }
-
-    public void setIdEstudiante(int idEstudiante) {
-        this.idEstudiante = idEstudiante;
-    }
-
-    public int getIdCurso() {
-        return idCurso;
-    }
-
-    public void setIdCurso(int idCurso) {
-        this.idCurso = idCurso;
-    }
-
-    public Date getFechaInscripcion() {
-        return fechaInscripcion;
-    }
-
-    public void setFechaInscripcion(Date fechaInscripcion) {
-        this.fechaInscripcion = fechaInscripcion;
-    }
-
-    public EstadoInscripcionEnum getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoInscripcionEnum estado) {
-        this.estado = estado;
-    }
 
 
 
 
 
+    
     // Métodos para cambiar el estado de la inscripción
-
-
-    
     public void activar() {
-        this.estado = EstadoInscripcionEnum.ACTIVA;
+        this.estado.setNombreEstado(EstadoInscripcionEnum.ACTIVA);
+        this.estado.setFechaCambio(new Date());
     }
 
     public void completar() {
-        this.estado = EstadoInscripcionEnum.COMPLETA;
+        this.estado.setNombreEstado(EstadoInscripcionEnum.COMPLETA);
+        this.estado.setFechaCambio(new Date());
     }
 
     public void cancelar() {
-        this.estado = EstadoInscripcionEnum.CANCELADA;
+        this.estado.setNombreEstado(EstadoInscripcionEnum.CANCELADA);
+        this.estado.setFechaCambio(new Date());
     }
 
     public void cambiarEstado(EstadoInscripcionEnum nuevoEstado) {
-        this.estado = nuevoEstado;
+        this.estado.setNombreEstado(nuevoEstado);
+        this.estado.setFechaCambio(new Date());
     }
 
     public EstadoInscripcionEnum obtenerEstado() {
-        return this.estado;
+        return this.estado.getNombreEstado();
     }
 
     @Override
@@ -97,3 +63,5 @@ public class Inscripcion {
                 + ", fechaInscripcion=" + fechaInscripcion + ", estado=" + estado + "]";
     }
 }
+
+    

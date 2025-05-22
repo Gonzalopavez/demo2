@@ -15,7 +15,7 @@ public class Horario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String dia;        // Ej: "Lunes"
-    private String horaInicio; // Ej: "08:00"
-    private String horaFin;    // Ej: "10:00"
+    private String dia;        
+    private String horaInicio; 
+    private String horaFin;    
 }
