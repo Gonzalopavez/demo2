@@ -1,22 +1,32 @@
 package com.example.demo2.Model;
+import jakarta.persistence.*; // permite conectar con la base de datos
 
-import jakarta.persistence.*;
+//librerias de lombok para generar getters y setters automaticamente
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//maneja listas de objetos, en este caso de horarios
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+
+
+@Entity //representa una tabla en la base de datos
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+
+
+
 public class Seccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    //ATRIBUTOS BASICOS DE LA SECCION
 
     private int idCurso;
     private int idDocente;
@@ -24,19 +34,27 @@ public class Seccion {
     private int cupoMaximo;
     private int cupoDisponible;
 
+
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Horario> horarios = new ArrayList<>();
+
+
+    // SIRVE PARA ACTUALIZAR LOS CUPOS DISPONIBLES, DEVUELVE TRUE SI SE PUEDE INSCRIBIR EN LA SECCION O FALSE SI NO SE PUEDE..
 
     public void actualizarCupo(int cupoNuevo) {
         this.cupoDisponible = cupoNuevo;
     }
 
+    // SIRVE PARA VER SI HAY CUPOS DISPONIBLES
+
     public boolean esCupoDisponible() {
         return cupoDisponible > 0;
     }
+
+    //SIRVE PARA AGREGAR HORARIOS A LA SECCION (AGREGA UN NUEVO OBJETO A L LISTA DE HORARIOS DE LA SECCION)
 
     public void agregarHorario(Horario horario) {
         this.horarios.add(horario);
     }
 }
- 

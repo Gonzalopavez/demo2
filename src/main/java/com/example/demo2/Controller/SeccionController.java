@@ -5,15 +5,20 @@ import com.example.demo2.Model.Seccion;
 import com.example.demo2.repository.SeccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/secciones")
+
+
 public class SeccionController {
 
     @Autowired
-    private SeccionRepository seccionRepository;
+    private SeccionRepository seccionRepository; // Inyecta el repositorio de secciones
+
+
+
 
     // Obtener todas las secciones
     @GetMapping
@@ -21,11 +26,18 @@ public class SeccionController {
         return seccionRepository.findAll();
     }
 
+
+
+
+
     // Obtener una sección por ID
     @GetMapping("/{id}")
     public Seccion getSeccionPorId(@PathVariable int id) {
         return seccionRepository.findById(id).orElse(null);
     }
+
+
+
 
     // Verificar si hay cupo disponible
     @GetMapping("/{id}/disponibilidad")
@@ -35,11 +47,19 @@ public class SeccionController {
                 .orElse(false);
     }
 
+
+
+
+
     // Crear una nueva sección
     @PostMapping
     public Seccion crearSeccion(@RequestBody Seccion seccion) {
         return seccionRepository.save(seccion);
     }
+
+
+
+
 
     // Actualizar el cupo disponible
     @PutMapping("/{id}")
@@ -50,11 +70,17 @@ public class SeccionController {
         }).orElse(null);
     }
 
+
+
+
     // Eliminar una sección
     @DeleteMapping("/{id}")
     public void eliminarSeccion(@PathVariable int id) {
         seccionRepository.deleteById(id);
     }
+
+
+
 
     // Agregar un horario a una sección
     @PostMapping("/{id}/horario")
