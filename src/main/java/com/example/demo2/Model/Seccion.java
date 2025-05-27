@@ -1,3 +1,6 @@
+
+
+
 package com.example.demo2.Model;
 import jakarta.persistence.*; // permite conectar con la base de datos
 
@@ -36,6 +39,11 @@ public class Seccion {
 
 
 
+    //una seccion puede tener muchos horarios, y un horario pertenece a una sola seccion
+    //cascade = CascadeType.ALL significa que si se elimina la seccion, se eliminan los horarios asociados
+    //fetch = FetchType.EAGER significa que se cargan los horarios asociados a la seccion al momento de cargar la seccion
+
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Horario> horarios = new ArrayList<>();
 
@@ -52,7 +60,7 @@ public class Seccion {
         return cupoDisponible > 0;
     }
 
-    //SIRVE PARA AGREGAR HORARIOS A LA SECCION (AGREGA UN NUEVO OBJETO A L LISTA DE HORARIOS DE LA SECCION)
+    //SIRVE PARA AGREGAR HORARIOS A LA SECCION (AGREGA UN NUEVO OBJETO A LA LISTA DE HORARIOS DE LA SECCION)
 
     public void agregarHorario(Horario horario) {
         this.horarios.add(horario);

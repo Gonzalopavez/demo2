@@ -1,25 +1,31 @@
 package com.example.demo2.Model;
-
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
+
 @Entity
-@Table(name = "asignaciones")
+@Table(name = "asignaciones") // nombra explicitamente la tabla, si no se especifica, se usará el nombre de la clase en minúsculas
 public class Asignacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)  // 🔍 Carga los datos completos del Ticket
+    private Long id;// Genera un ID único automáticamente
+
+    @ManyToOne(fetch = FetchType.EAGER)  // Carga los datos completos del Ticket
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    @ManyToOne(fetch = FetchType.EAGER)  // 🔍 Carga los datos completos del Soporte
+    @ManyToOne(fetch = FetchType.EAGER)  //  Carga los datos completos del Soporte
     @JoinColumn(name = "soporte_id")
     private Soporte soporte;
 
-    private LocalDate fechaAsignacion;
+
+
+
+    private LocalDate fechaAsignacion;// Fecha en la que se asignó el ticket al soporte
+
 
     // Getters y setters
     public Long getId() {
