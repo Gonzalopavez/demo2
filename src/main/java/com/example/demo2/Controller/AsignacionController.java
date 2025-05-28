@@ -26,19 +26,19 @@ public class AsignacionController {
     @Autowired
     private SoporteRepository soporteRepository;
 
-    // ➡️ Obtener todas las asignaciones
+    // Obtener todas las asignaciones
     @GetMapping
     public List<Asignacion> getAllAsignaciones() {
         return asignacionRepository.findAll();
     }
 
-    // ➡️ Crear una nueva asignación
+    //  Crear una nueva asignación
     @PostMapping
     public Asignacion createAsignacion(@RequestBody Asignacion asignacion) {
         return asignacionRepository.save(asignacion);
     }
 
-    // ➡️ Actualizar una asignación existente
+    //  Actualizar una asignación existente
     @PutMapping("/{id}")
     public Asignacion updateAsignacion(@PathVariable Long id, @RequestBody Asignacion asignacionDetails) {
         Optional<Asignacion> optionalAsignacion = asignacionRepository.findById(id);
@@ -64,13 +64,13 @@ public class AsignacionController {
         }
     }
 
-    // ➡️ Eliminar una asignación
+    //  Eliminar una asignación
     @DeleteMapping("/{id}")
     public void deleteAsignacion(@PathVariable Long id) {
         asignacionRepository.deleteById(id);
     }
 
-    // ➡️ **NUEVO MÉTODO:** Reasignar un soporte a una asignación
+    //  Reasignar un soporte a una asignación
     @PutMapping("/{id}/reasignar")
     public ResponseEntity<Asignacion> reasignarSoporte(
             @PathVariable Long id,
@@ -82,8 +82,8 @@ public class AsignacionController {
         if (asignacionOptional.isPresent() && soporteOptional.isPresent()) {
             Asignacion asignacion = asignacionOptional.get();
             Soporte nuevoSoporte = soporteOptional.get();
-            asignacion.setSoporte(nuevoSoporte); // 🔄 Actualiza el soporte
-            asignacionRepository.save(asignacion); // 💾 Guarda el cambio
+            asignacion.setSoporte(nuevoSoporte); //  Actualiza el soporte
+            asignacionRepository.save(asignacion); //  Guarda el cambio
             return ResponseEntity.ok(asignacion);
         } else {
             return ResponseEntity.notFound().build();
