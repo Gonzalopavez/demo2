@@ -1,93 +1,46 @@
 package com.example.demo2.Controller;
 
-import com.example.demo2.Model.Horario;
 import com.example.demo2.Model.Seccion;
-import com.example.demo2.repository.SeccionRepository;
+import com.example.demo2.service.SeccionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/secciones")
-
-
+@RequestMapping("/secciones")
 public class SeccionController {
 
     @Autowired
-    private SeccionRepository seccionRepository; // Inyecta el repositorio de secciones
+    private SeccionService seccionService;
 
+    @PostMapping("/guardar")
+    public ResponseEntity<Seccion> guardarSeccion(@RequestBody Seccion seccion) {
+        Seccion nueva = seccionService.guardarSeccion(seccion);
+        return new ResponseEntity<>(nueva, HttpStatus.CREATED);
+    }
 
-
-
-    // Obtener todas las secciones
     @GetMapping
-    public List<Seccion> getSecciones() {
-        return seccionRepository.findAll();
+    public List<Seccion> listarSecciones() {
+        return seccionService.obtenerTodas();
     }
 
-
-
-
-
-    // Obtener una sección por ID
     @GetMapping("/{id}")
-    public Seccion getSeccionPorId(@PathVariable int id) {
-        return seccionRepository.findById(id).orElse(null);
+    public ResponseEntity<Seccion> obtenerSeccionPorId(@PathVariable Long id) {
+        Seccion seccion = seccionService.obtenerPorId(id);
+        if (seccion != null) {
+            return ResponseEntity.ok(seccion);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-
-
-
-    // Verificar si hay cupo disponible
-    @GetMapping("/{id}/disponibilidad")
-    public boolean verificarCupoDisponible(@PathVariable int id) {
-        return seccionRepository.findById(id)
-                .map(Seccion::esCupoDisponible)
-                .orElse(false);
-    }
-
-
-
-
-
-    // Crear una nueva sección
-    @PostMapping
-    public Seccion crearSeccion(@RequestBody Seccion seccion) {
-        return seccionRepository.save(seccion);
-    }
-
-
-
-
-
-    // Actualizar el cupo disponible
-    @PutMapping("/{id}")
-    public Seccion actualizarCupo(@PathVariable int id, @RequestParam int nuevoCupo) {
-        return seccionRepository.findById(id).map(seccion -> {
-            seccion.actualizarCupo(nuevoCupo);
-            return seccionRepository.save(seccion);
-        }).orElse(null);
-    }
-
-
-
-
-    // Eliminar una sección
     @DeleteMapping("/{id}")
-    public void eliminarSeccion(@PathVariable int id) {
-        seccionRepository.deleteById(id);
-    }
-
-
-
-
-    // Agregar un horario a una sección
-    @PostMapping("/{id}/horario")
-    public Seccion agregarHorario(@PathVariable int id, @RequestBody Horario horario) {
-        return seccionRepository.findById(id).map(seccion -> {
-            seccion.agregarHorario(horario);
-            return seccionRepository.save(seccion);
-        }).orElse(null);
+    public ResponseEntity<Void> eliminarSeccion(@PathVariable Long id) {
+        seccionService.eliminarSeccion(id);
+        return ResponseEntity.noContent().build();
     }
 }

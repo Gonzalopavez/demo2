@@ -27,7 +27,8 @@ public class Seccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id; //Es requerido para que JPA pueda identificar la entidad de forma única
+    //El ID es la clave primaria de la tabla Seccion, se genera automaticamente al insertar un nuevo registro
 
     //ATRIBUTOS BASICOS DE LA SECCION
 
