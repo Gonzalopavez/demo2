@@ -1,12 +1,20 @@
-package com.example.demo2.service.impl;
+//Aqui se implementa la interfaz SeccionService
+//EL cómo se debe implementar los metodos de la interfaz SeccionService
 
+
+
+package com.example.demo2.service.impl;
 import com.example.demo2.Model.Seccion;
 import com.example.demo2.repository.SeccionRepository;
 import com.example.demo2.service.SeccionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+
+
 @Service
+
 public class SeccionServiceImpl implements SeccionService {
 
      @Autowired
