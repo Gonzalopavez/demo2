@@ -25,7 +25,7 @@ public class SeccionService {
         return seccionRepository.save(seccion);
     }
 
-   
+
     public List<Seccion> obtenerTodas() {
         return seccionRepository.findAll();
     }
