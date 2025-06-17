@@ -43,4 +43,20 @@ public class SeccionController {
         seccionService.eliminarSeccion(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/cupo-disponible")
+public ResponseEntity<Boolean> cupoDisponible(@PathVariable Long id) {
+    Seccion seccion = seccionService.obtenerPorId(id);
+    if (seccion == null) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(seccion.esCupoDisponible());
+}
+
+
+
+
+
+
+
 }
