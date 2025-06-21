@@ -49,7 +49,7 @@ public class Seccion {
     private List<Horario> horarios = new ArrayList<>();
 
 
-    // SIRVE PARA ACTUALIZAR LOS CUPOS DISPONIBLES, DEVUELVE TRUE SI SE PUEDE INSCRIBIR EN LA SECCION O FALSE SI NO SE PUEDE..
+    // SIRVE PARA ACTUALIZAR LOS CUPOS DISPONIBLES DE UNA SECCION
 
     public void actualizarCupo(int cupoNuevo) {
         this.cupoDisponible = cupoNuevo;
