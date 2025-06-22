@@ -58,7 +58,7 @@ public class Seccion {
     // SIRVE PARA VER SI HAY CUPOS DISPONIBLES
 
     public boolean esCupoDisponible() {
-        return cupoDisponible > 0;
+        return this.cupoDisponible > 0;
     }
 
     //SIRVE PARA AGREGAR HORARIOS A LA SECCION (AGREGA UN NUEVO OBJETO A LA LISTA DE HORARIOS DE LA SECCION)

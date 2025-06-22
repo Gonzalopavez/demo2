@@ -19,7 +19,7 @@ public class SeccionController {
     @Autowired
     private SeccionService seccionService;
 
-    // Este método guarda una nueva sección en la base de datos.
+    // 1. Este método guarda una nueva sección en la base de datos.
 
     @PostMapping("/guardar")
     public ResponseEntity<Seccion> guardarSeccion(@RequestBody Seccion seccion) {
@@ -27,14 +27,14 @@ public class SeccionController {
         return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
 
-    // Este método obtiene todas las secciones de la base de datos.
+    // 2. Este método obtiene todas las secciones de la base de datos.
 
     @GetMapping
     public List<Seccion> listarSecciones() {
         return seccionService.obtenerTodas();
     }
 
-    // Este método obtiene una sección por su ID. Si no se encuentra, devuelve null.
+    // 3. Este método obtiene una sección por su ID. Si no se encuentra, devuelve null.
 
     @GetMapping("/{id}")
     public ResponseEntity<Seccion> obtenerSeccionPorId(@PathVariable Long id) {
@@ -46,7 +46,7 @@ public class SeccionController {
         }
     }
 
-    // Este método elimina una sección por su ID. Si no se encuentra, no hace nada.
+    // 4. Este método elimina una sección por su ID. Si no se encuentra, no hace nada.
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSeccion(@PathVariable Long id) {
@@ -54,26 +54,44 @@ public class SeccionController {
         return ResponseEntity.noContent().build();
     }
 
-    //este metodo actualiza un cupo disponible de una sección
+
+
+    // 5. Ver cupos disponibles de una sección
+
+
+
+@GetMapping("/{id}/cupo-disponible")
+public ResponseEntity<Boolean> cupoDisponible(@PathVariable Long id) {
+    Seccion seccion = seccionService.obtenerPorId(id);
+    if (seccion == null) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(seccion.esCupoDisponible());
+}
+
+
+
+
+    // 6. este metodo actualiza un cupo disponible de una sección
     
 @PutMapping("/{id}/actualizar-cupo")
 public ResponseEntity<Seccion> actualizarCupoDisponible(
         @PathVariable Long id,
         @RequestParam int nuevoCupo) {
-
-    Seccion seccion = seccionService.obtenerPorId(id);
-    if (seccion == null) {
+    
+    Seccion actualizada = seccionService.actualizarCupoDisponible(id, nuevoCupo);
+    
+    if (actualizada != null) {
+        return ResponseEntity.ok(actualizada);
+    } else {
         return ResponseEntity.notFound().build();
     }
-
-    seccion.setCupoDisponible(nuevoCupo);
-    Seccion actualizada = seccionService.guardarSeccion(seccion);
-    return ResponseEntity.ok(actualizada);
 }
 
 
 
-//actualizar una sección
+
+// 7. actualizar una sección
 
     @PutMapping("/{id}")
     public ResponseEntity<Seccion> actualizarSeccion(@PathVariable Long id, @RequestBody Seccion seccion) {

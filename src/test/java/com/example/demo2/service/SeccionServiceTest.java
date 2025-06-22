@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +36,7 @@ public class SeccionServiceTest {
 
 
 
-    // Test para guardar una sección
+    // 1. Test para guardar una sección
 
     @Test
     void testGuardarSeccion() {
@@ -53,7 +56,7 @@ public class SeccionServiceTest {
 
 
 
-    // Test para listar todas las secciones
+    // 2. Test para listar todas las secciones
 
     @Test
     void testListarSecciones() {
@@ -72,7 +75,7 @@ public class SeccionServiceTest {
 
 
 
-    // Test para obtener una sección por ID
+    // 3. Test para obtener una sección por ID
 
 @Test
 void testObtenerSeccionPorId() {
@@ -90,7 +93,7 @@ void testObtenerSeccionPorId() {
 
 
 
-// Test para eliminar una sección por su ID
+// 4. Test para eliminar una sección por su ID
 
 @Test
 void testEliminarSeccion() {
@@ -103,7 +106,79 @@ void testEliminarSeccion() {
 }
 
 
-//test para actulizar una seccion
+// 5. Test para verificar si hay cupo disponible en una sección
+
+@Test
+void testHayCupoDisponible_true() {
+    Seccion seccion = new Seccion();
+    seccion.setCupoDisponible(5);
+
+    when(seccionRepository.findById(1L)).thenReturn(Optional.of(seccion));
+
+    boolean resultado = seccionService.hayCupoDisponible(1L);
+
+    assertTrue(resultado);
+}
+
+@Test
+void testHayCupoDisponible_false() {
+    Seccion seccion = new Seccion();
+    seccion.setCupoDisponible(0);
+
+    when(seccionRepository.findById(1L)).thenReturn(Optional.of(seccion));
+
+    boolean resultado = seccionService.hayCupoDisponible(1L);
+
+    assertFalse(resultado);
+}
+
+
+// 6. Test para actualizar el cupo disponible de una sección
+
+@Test
+void testActualizarCupoDisponible_existente() {
+    Seccion seccion = new Seccion();
+    seccion.setId(1L);
+    seccion.setCupoDisponible(5);
+
+    when(seccionRepository.findById(1L)).thenReturn(Optional.of(seccion));
+    when(seccionRepository.save(any(Seccion.class))).thenReturn(seccion);
+
+    Seccion resultado = seccionService.actualizarCupoDisponible(1L, 10);
+
+    assertNotNull(resultado);
+    assertEquals(10, resultado.getCupoDisponible());
+}
+
+@Test
+void testActualizarCupoDisponible_noEncontrada() {
+    when(seccionRepository.findById(1L)).thenReturn(Optional.empty());
+
+    Seccion resultado = seccionService.actualizarCupoDisponible(1L, 10);
+
+    assertNull(resultado);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 7. test para actulizar una seccion
 @Test
 public void testActualizarSeccion() {
 

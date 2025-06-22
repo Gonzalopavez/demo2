@@ -19,27 +19,27 @@ public class SeccionService {
     @Autowired
     private SeccionRepository seccionRepository;
 
-    // Este método guarda una nueva sección en la base de datos.
+    // 1. Este método guarda una nueva sección en la base de datos.
 
     public Seccion guardarSeccion(Seccion seccion) {
         return seccionRepository.save(seccion);
     }
 
 
-    // Este método obtiene todas las secciones de la base de datos.
+    // 2. Este método obtiene todas las secciones de la base de datos.
 
 
     public List<Seccion> obtenerTodas() {
         return seccionRepository.findAll();
     }
 
-    // Este método obtiene una sección por su ID. Si no se encuentra, devuelve null.
+    // 3.  Este método obtiene una sección por su ID. Si no se encuentra, devuelve null.
 
     public Seccion obtenerPorId(Long id) {
         return seccionRepository.findById(id).orElse(null);
     }
 
-    // Este método elimina una sección por su ID. Si no se encuentra, no hace nada.
+    // 4. Este método elimina una sección por su ID. Si no se encuentra, no hace nada.
 
     
     public void eliminarSeccion(Long id) {
@@ -47,11 +47,28 @@ public class SeccionService {
     }
 
 
-    
-    // el motodo del controller que actualiza el cupo disponible de una sección, no se encuentra aqui
-    //ya que se encuentra en el controller, pero se implementa en la interfaz SeccionService
-    //no es necesario implementarlo aqui porqu no usa una logica de negocio compleja, solo actualiza el cupo disponible de una sección
+    // 5. Ver cupos disponibles de una sección
 
+    public boolean hayCupoDisponible(Long id) {
+    Seccion seccion = obtenerPorId(id);
+    if (seccion == null) {
+        throw new IllegalArgumentException("Sección no encontrada");
+    }
+    return seccion.esCupoDisponible();
+}
+
+    // 6. actualizar cupos disponibles de una sección
+
+
+    public Seccion actualizarCupoDisponible(Long id, int nuevoCupo) {
+    Seccion seccion = obtenerPorId(id);
+    if (seccion == null) {
+        return null;
+    }
+
+    seccion.setCupoDisponible(nuevoCupo);
+    return guardarSeccion(seccion);
+}
 
 
 

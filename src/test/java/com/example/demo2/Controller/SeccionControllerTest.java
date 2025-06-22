@@ -7,13 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 //import org.mockito.Mockito;
 
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+//import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+//import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -92,21 +95,22 @@ class SeccionControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    // 5. CUPO DISPONIBLE - TRUE 
-    @Test
-    void testCupoDisponible_True() throws Exception {
-        Seccion seccion = new Seccion();
-        seccion.setId(1L);
-        seccion.setCupoDisponible(5); // tiene cupos
+    // 5. VER CUPO DISPONIBLE - TRUE 
+ @Test
+void testCupoDisponible_True() throws Exception {
+    Seccion seccion = new Seccion();
+    seccion.setId(1L);
+    seccion.setCupoDisponible(5); // Tiene cupos disponibles
 
-        when(seccionService.obtenerPorId(1L)).thenReturn(seccion);
+    when(seccionService.obtenerPorId(1L)).thenReturn(seccion);
 
-        mockMvc.perform(get("/api/secciones/1/cupo-disponible"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("true"));
-    }
+    mockMvc.perform(get("/api/secciones/1/cupo-disponible"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("true"));
+}
 
-    // 6. CUPO DISPONIBLE - FALSE
+
+    // CUPO DISPONIBLE - FALSE
     @Test
     void testCupoDisponible_False() throws Exception {
         Seccion seccion = new Seccion();
@@ -120,14 +124,50 @@ class SeccionControllerTest {
                 .andExpect(content().string("false"));
     }
 
-    // 7. CUPO DISPONIBLE - NO EXISTE
+    // CUPO DISPONIBLE - NO EXISTE
     @Test
-    void testCupoDisponible_SeccionNoExiste() throws Exception {
-        when(seccionService.obtenerPorId(99L)).thenReturn(null); // no existe
+void testCupoDisponible_SeccionNoExiste() throws Exception {
+    // Simula que la sección no se encuentra
+    when(seccionService.obtenerPorId(99L)).thenReturn(null);
 
-        mockMvc.perform(get("/api/secciones/99/cupo-disponible"))
-                .andExpect(status().isNotFound());
-    }
+    mockMvc.perform(get("/api/secciones/99/cupo-disponible"))
+            .andExpect(status().isNotFound());
+}
+
+ 
+    // 6. ACTUALIZAR CUPOS DISPONIBLES
+
+  
+@Test
+void testActualizarCupoDisponible_SeccionExiste() throws Exception {
+    Seccion seccion = new Seccion();
+    seccion.setId(1L);
+    seccion.setCupoDisponible(15);
+
+    when(seccionService.actualizarCupoDisponible(1L, 15)).thenReturn(seccion);
+
+    mockMvc.perform(put("/api/secciones/1/actualizar-cupo?nuevoCupo=15"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.cupoDisponible").value(15));
+}
+
+
+
+
+@Test
+void testActualizarCupoDisponible_SeccionNoExiste() throws Exception {
+    when(seccionService.actualizarCupoDisponible(1L, 15)).thenReturn(null);
+
+    mockMvc.perform(put("/api/secciones/1/actualizar-cupo")
+            .param("nuevoCupo", "15"))
+            .andExpect(status().isNotFound());
+}
+
+
+
+
+// 7. ACTUALIZAR SECCIÓN
+
 
     @Test
 void testActualizarSeccion() throws Exception {
