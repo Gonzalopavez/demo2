@@ -1,9 +1,12 @@
 package com.example.demo2.Controller;
 
 import com.example.demo2.Model.Seccion;
+import com.example.demo2.assembler.SeccionModelAssembler;
+import com.example.demo2.dto.SeccionDTO;
 import com.example.demo2.service.SeccionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,10 @@ import java.util.List;
 public class SeccionController {
 
     @Autowired
+    private SeccionModelAssembler assembler;
+
+
+    @Autowired
     private SeccionService seccionService;
 
     // 1. Este método guarda una nueva sección en la base de datos.
@@ -27,24 +34,30 @@ public class SeccionController {
         return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
 
-    // 2. Este método obtiene todas las secciones de la base de datos.
+    // 2. Este método obtiene todas las secciones de la base de datos. IMPLEMENTACION HATEOAS LISTAS
 
-    @GetMapping
-    public List<Seccion> listarSecciones() {
-        return seccionService.obtenerTodas();
+    @GetMapping("/secciones")
+public ResponseEntity<CollectionModel<SeccionDTO>> listarSecciones() {
+    List<Seccion> secciones = seccionService.obtenerTodas();
+    List<SeccionDTO> dtos = secciones.stream()
+    .map(assembler::toModel)
+    .toList();
+    return ResponseEntity.ok(CollectionModel.of(dtos));
+}
+
+
+    // 3. Este método obtiene una sección por su ID. Si no se encuentra, devuelve null. IMPLEMENTACION HATEOAS OBJETO
+
+    @GetMapping("/secciones/{id}")
+public ResponseEntity<SeccionDTO> obtenerSeccionPorId(@PathVariable Long id) {
+    Seccion seccion = seccionService.obtenerPorId(id);
+    if (seccion != null) {
+        return ResponseEntity.ok(assembler.toModel(seccion));
+    } else {
+        return ResponseEntity.notFound().build();
     }
+}
 
-    // 3. Este método obtiene una sección por su ID. Si no se encuentra, devuelve null.
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Seccion> obtenerSeccionPorId(@PathVariable Long id) {
-        Seccion seccion = seccionService.obtenerPorId(id);
-        if (seccion != null) {
-            return ResponseEntity.ok(seccion);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     // 4. Este método elimina una sección por su ID. Si no se encuentra, no hace nada.
 
