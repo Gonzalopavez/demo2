@@ -28,7 +28,10 @@ import java.util.Arrays;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(SeccionController.class)
+
+
+@WebMvcTest(SeccionController.class) //solo cargar el controlador SeccionController y no toda la aplicacion
+
 class SeccionControllerTest {
 
 
@@ -55,23 +58,33 @@ class SeccionControllerTest {
 
 
 
+
+
+
+
+
     // 1. GUARDAR
     //Se simula guardar una seccion y se verifica que se retorne el objeto creado con el estado 201 (CREATED)
     //y que el nombre de la sección sea "Sección A"
 
     @Test
     void testGuardarSeccion() throws Exception {
+
+        // Crea una sección simulada
         Seccion seccion = new Seccion();
         seccion.setId(1L);
         seccion.setNombre("Sección A");
 
+        // Simula el comportamiento del servicio para guardar la sección
+
         when(seccionService.guardarSeccion(any(Seccion.class))).thenReturn(seccion);
 
         mockMvc.perform(post("/api/secciones/guardar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(seccion)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.nombre").value("Sección A"));
+
+        .contentType(MediaType.APPLICATION_JSON) // Indica que el cuerpo de la petición es JSON
+        .content(objectMapper.writeValueAsString(seccion))) //convierte el objeto Seccion a JSON
+        .andExpect(status().isCreated()) // Verifica que el estado de la respuesta sea 201 (CREATED)
+        .andExpect(jsonPath("$.nombre").value("Sección A")); // verifica que el nombre de la sección sea "Sección A"
     }
 
 
@@ -81,10 +94,13 @@ class SeccionControllerTest {
 
     // 2. LISTAR TODAS
     //Simula 2 secciones y verifica que se retorne una lista con 2 elementos
-    // se convierte cada Seccion a SeccionDTO usando el assembler
+    //se convierte cada Seccion a SeccionDTO usando el assembler
     //se espera que el endpoint devuelva una lista 
+
     @Test
     void testListarSecciones() throws Exception {
+
+
         Seccion s1 = new Seccion();
         s1.setId(1L);
         s1.setNombre("Sección A");
@@ -93,7 +109,12 @@ class SeccionControllerTest {
         s2.setId(2L);
         s2.setNombre("Sección B");
 
+        // Simula el comportamiento del servicio para obtener todas las secciones, asi no 
+        //necesitamos una base de datos real
         when(seccionService.obtenerTodas()).thenReturn(Arrays.asList(s1, s2));
+
+        //objeto DTO que se espera recibir en la respuesta
+        //el assembler convierte Seccion a SeccionDTO
 
         SeccionDTO dto1 = new SeccionDTO();
         dto1.setId(1L);
@@ -103,15 +124,19 @@ class SeccionControllerTest {
         dto2.setId(2L);
         dto2.setNombre("Sección B");
 
+
+    //se mockea el comportamiento del assembler para convertir Seccion a SeccionDTO
     when(assembler.toModel(s1)).thenReturn(dto1);
     when(assembler.toModel(s2)).thenReturn(dto2);
 
     mockMvc.perform(get("/api/secciones/secciones"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$._embedded.seccionDTOList.length()").value(2))
+        .andExpect(jsonPath("$._embedded.seccionDTOList.length()").value(2)) // verifica que la lista tenga 2 elementos
+
+        //verifica que los nombres de las secciones sean correctos
         .andExpect(jsonPath("$._embedded.seccionDTOList[0].nombre").value("Sección A"))
         .andExpect(jsonPath("$._embedded.seccionDTOList[1].nombre").value("Sección B"));
-        // esto verifica que la lista tenga 2 elementos
+
 }
     
 
@@ -135,7 +160,7 @@ void testObtenerPorId() throws Exception {
 
     mockMvc.perform(get("/api/secciones/secciones/1"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.nombre").value("Sección A")); // esto debería funcionar si el dto está bien
+        .andExpect(jsonPath("$.nombre").value("Sección A")); 
 }
 
 
@@ -152,7 +177,7 @@ void testObtenerPorId() throws Exception {
         doNothing().when(seccionService).eliminarSeccion(1L);
 
         mockMvc.perform(delete("/api/secciones/1"))
-                .andExpect(status().isNoContent());
+        .andExpect(status().isNoContent());
     }
 
 
