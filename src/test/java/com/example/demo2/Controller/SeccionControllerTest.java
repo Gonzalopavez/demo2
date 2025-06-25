@@ -1,6 +1,8 @@
 package com.example.demo2.Controller;
 
 import com.example.demo2.Model.Seccion;
+import com.example.demo2.assembler.SeccionModelAssembler;
+import com.example.demo2.dto.SeccionDTO;
 import com.example.demo2.service.SeccionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,16 +31,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SeccionController.class)
 class SeccionControllerTest {
 
+
+
+    //Objeto de spring para simular peticiones HTTP a los endpoints del controlador
     @Autowired
     private MockMvc mockMvc;
 
+
+    //Le dice a spring que use una version simulada del servicio SeccionService ( un mock)
     @MockBean
     private SeccionService seccionService;
 
+
+    //Lo mismo para el assembler HATEOAS
+    @MockBean
+    private SeccionModelAssembler assembler;
+
+
+    //Ayuda para convertir objetos a JSON y viceversa
     @Autowired
     private ObjectMapper objectMapper;
 
+
+
+
     // 1. GUARDAR
+    //Se simula guardar una seccion y se verifica que se retorne el objeto creado con el estado 201 (CREATED)
+    //y que el nombre de la sección sea "Sección A"
+
     @Test
     void testGuardarSeccion() throws Exception {
         Seccion seccion = new Seccion();
@@ -54,7 +74,15 @@ class SeccionControllerTest {
                 .andExpect(jsonPath("$.nombre").value("Sección A"));
     }
 
+
+
+
+
+
     // 2. LISTAR TODAS
+    //Simula 2 secciones y verifica que se retorne una lista con 2 elementos
+    // se convierte cada Seccion a SeccionDTO usando el assembler
+    //se espera que el endpoint devuelva una lista 
     @Test
     void testListarSecciones() throws Exception {
         Seccion s1 = new Seccion();
@@ -67,26 +95,58 @@ class SeccionControllerTest {
 
         when(seccionService.obtenerTodas()).thenReturn(Arrays.asList(s1, s2));
 
-        mockMvc.perform(get("/api/secciones"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(2));
-    }
+        SeccionDTO dto1 = new SeccionDTO();
+        dto1.setId(1L);
+        dto1.setNombre("Sección A");
+
+        SeccionDTO dto2 = new SeccionDTO();
+        dto2.setId(2L);
+        dto2.setNombre("Sección B");
+
+    when(assembler.toModel(s1)).thenReturn(dto1);
+    when(assembler.toModel(s2)).thenReturn(dto2);
+
+    mockMvc.perform(get("/api/secciones/secciones"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$._embedded.seccionDTOList.length()").value(2))
+        .andExpect(jsonPath("$._embedded.seccionDTOList[0].nombre").value("Sección A"))
+        .andExpect(jsonPath("$._embedded.seccionDTOList[1].nombre").value("Sección B"));
+        // esto verifica que la lista tenga 2 elementos
+}
+    
+
+
+
+
 
     // 3. OBTENER POR ID
     @Test
-    void testObtenerPorId() throws Exception {
-        Seccion seccion = new Seccion();
-        seccion.setId(1L);
-        seccion.setNombre("Sección A");
+void testObtenerPorId() throws Exception {
+    Seccion seccion = new Seccion();
+    seccion.setId(1L);
+    seccion.setNombre("Sección A");
 
-        when(seccionService.obtenerPorId(1L)).thenReturn(seccion);
+    SeccionDTO dto = new SeccionDTO();
+    dto.setId(1L);
+    dto.setNombre("Sección A");
 
-        mockMvc.perform(get("/api/secciones/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Sección A"));
-    }
+    when(seccionService.obtenerPorId(1L)).thenReturn(seccion);
+    when(assembler.toModel(seccion)).thenReturn(dto);
+
+    mockMvc.perform(get("/api/secciones/secciones/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.nombre").value("Sección A")); // esto debería funcionar si el dto está bien
+}
+
+
+
+
+
+
+
 
     // 4. ELIMINAR
+    //simula que se elimina una sección con ID 1 y verifica que se retorne un estado 204 (NO CONTENT)
     @Test
     void testEliminarSeccion() throws Exception {
         doNothing().when(seccionService).eliminarSeccion(1L);
@@ -95,8 +155,17 @@ class SeccionControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+
+
+
+
+    //prueba 3 situaciones : hay cupos, no hay cupos y la sección no existe
+
+
+
+
     // 5. VER CUPO DISPONIBLE - TRUE 
- @Test
+@Test
 void testCupoDisponible_True() throws Exception {
     Seccion seccion = new Seccion();
     seccion.setId(1L);
@@ -111,6 +180,7 @@ void testCupoDisponible_True() throws Exception {
 
 
     // CUPO DISPONIBLE - FALSE
+
     @Test
     void testCupoDisponible_False() throws Exception {
         Seccion seccion = new Seccion();
@@ -124,9 +194,11 @@ void testCupoDisponible_True() throws Exception {
                 .andExpect(content().string("false"));
     }
 
+
     // CUPO DISPONIBLE - NO EXISTE
     @Test
 void testCupoDisponible_SeccionNoExiste() throws Exception {
+
     // Simula que la sección no se encuentra
     when(seccionService.obtenerPorId(99L)).thenReturn(null);
 
@@ -134,10 +206,14 @@ void testCupoDisponible_SeccionNoExiste() throws Exception {
             .andExpect(status().isNotFound());
 }
 
- 
+
+
+
+
+
     // 6. ACTUALIZAR CUPOS DISPONIBLES
 
-  
+
 @Test
 void testActualizarCupoDisponible_SeccionExiste() throws Exception {
     Seccion seccion = new Seccion();

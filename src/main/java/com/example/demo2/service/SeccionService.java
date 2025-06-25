@@ -1,8 +1,6 @@
-
-
-
-
 package com.example.demo2.service;
+
+
 import com.example.demo2.Model.Seccion;
 import com.example.demo2.repository.SeccionRepository;
 import com.example.demo2.service.SeccionService;
@@ -12,12 +10,22 @@ import java.util.List;
 
 
 
-@Service
+@Service // Anotación que indica que esta clase es un servicio de Spring
 
 public class SeccionService {
 
+
+    // Inyección de dependencias para acceder al repositorio de Sección
+    // Esto permite realizar operaciones CRUD sobre la entidad Sección en la base de datos
     @Autowired
     private SeccionRepository seccionRepository;
+
+
+
+                           // Métodos del servicio SeccionService
+
+
+
 
     // 1. Este método guarda una nueva sección en la base de datos.
 
@@ -47,7 +55,7 @@ public class SeccionService {
     }
 
 
-    // 5. Ver cupos disponibles de una sección
+    // 5. Ver cupos disponibles de una sección, por id , si no existe la sección lanza error
 
     public boolean hayCupoDisponible(Long id) {
     Seccion seccion = obtenerPorId(id);
@@ -74,7 +82,9 @@ public class SeccionService {
 
 
 
-    // Este método actualiza una sección existente. Si la sección no existe, devuelve null.
+    // 7. Este método actualiza una sección existente, si existe..se actualizan sus atributos y 
+    //se guarda de nuevo en la base de datos.
+    //si no existe, devuelve null.
 
 
     public Seccion actualizarSeccion(Long id, Seccion seccionNueva) {

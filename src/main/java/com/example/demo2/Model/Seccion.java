@@ -1,8 +1,7 @@
-
-
-
 package com.example.demo2.Model;
-import jakarta.persistence.*; // permite conectar con la base de datos
+
+// permite conectar con la base de datos
+import jakarta.persistence.*; 
 
 //librerias de lombok para generar getters y setters automaticamente
 import lombok.AllArgsConstructor;
@@ -15,8 +14,10 @@ import java.util.List;
 
 
 
-@Entity //representa una tabla en la base de datos
-@Data
+@Entity //Indicamos que esta clase es una entidad JPA, lo que significa que se corresponde con una tabla en la base de datos
+
+//Anotaciones de Lombok para generar automaticamente los getters, setters, constructores y toString
+@Data 
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -25,10 +26,11 @@ import java.util.List;
 
 public class Seccion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id //Indica que este atributo es la clave primaria de la entidad Seccion
+    
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //Genera el ID de forma automatica al insertar un nuevo registro en la tabla Seccion
     private Long id; //Es requerido para que JPA pueda identificar la entidad de forma única
-    //El ID es la clave primaria de la tabla Seccion, se genera automaticamente al insertar un nuevo registro
+
 
     //ATRIBUTOS BASICOS DE LA SECCION
 
@@ -39,13 +41,20 @@ public class Seccion {
     private int cupoDisponible;
 
 
+      // RELACION ENTRE SECCION Y HORARIO
 
-    //una seccion puede tener muchos horarios, y un horario pertenece a una sola seccion
-    //cascade = CascadeType.ALL significa que si se elimina la seccion, se eliminan los horarios asociados
-    //fetch = FetchType.EAGER significa que se cargan los horarios asociados a la seccion al momento de cargar la seccion
+//OneToMany:  una seccion puede tener muchos horarios, y un horario pertenece a una sola seccion
+
+//cascade = CascadeType.ALL : significa que si se elimina la seccion, se eliminan los horarios asociados
+
+//fetch = FetchType.EAGER : significa que se cargan los horarios asociados a la seccion al momento de cargar la seccion
+
+
 
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    //lista de horarios vacia que se inicializa al crear una nueva seccion
     private List<Horario> horarios = new ArrayList<>();
 
 

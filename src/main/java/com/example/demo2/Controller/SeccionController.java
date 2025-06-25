@@ -13,18 +13,38 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+
+// Indica que esta clase es un controlador REST
+@RestController 
 
 
-@RequestMapping("/api/secciones")
+//todos los endpoints de este controlador comienzan con /api/secciones
+@RequestMapping("/api/secciones") 
+
+
 public class SeccionController {
 
+
+    //inyecta el ensamblador de modelos para convertir entidades a DTOs con HATEOAS
+
     @Autowired
-    private SeccionModelAssembler assembler;
+    private SeccionModelAssembler assembler; 
+
+
+
+
+
+    //inyecta el servicio de secciones para manejar la lógica de negocio
 
 
     @Autowired
-    private SeccionService seccionService;
+    private SeccionService seccionService; 
+
+
+
+
+
+    
 
     // 1. Este método guarda una nueva sección en la base de datos.
 
