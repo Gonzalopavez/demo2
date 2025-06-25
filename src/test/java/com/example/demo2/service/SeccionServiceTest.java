@@ -1,6 +1,6 @@
 package com.example.demo2.service;
 
-import java.util.Optional;
+import java.util.Optional; // para trabajr con posibles valores nulos
 import com.example.demo2.Model.Seccion;
 import com.example.demo2.repository.SeccionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +21,12 @@ import static org.mockito.Mockito.*;
 public class SeccionServiceTest {
 
     @Mock
-    private SeccionRepository seccionRepository;
+    private SeccionRepository seccionRepository; //se simula el repositorio SeccionRepository, no se usa la base de datos real
 
     @InjectMocks
     private SeccionService seccionService;
 
+    //antes de cada test, se crea una instancia de SeccionService y se inyecta el mock del repositorio
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -40,13 +41,20 @@ public class SeccionServiceTest {
 
     @Test
     void testGuardarSeccion() {
+
+        //se crea una sección nueva sin ID (null) y se simula que el repositorio la guarda y retorna una sección con ID 1
         Seccion seccion = new Seccion(null, 1, 10, "Sección A", 30, 30, new ArrayList<>());
         Seccion seccionGuardada = new Seccion(1L, 1, 10, "Sección A", 30, 30, new ArrayList<>());
+     
 
+        // al hacer save, se retorna la sección guardada con ID 1
         when(seccionRepository.save(seccion)).thenReturn(seccionGuardada);
 
-        Seccion resultado = seccionService.guardarSeccion(seccion);
 
+        // se llama al método guardarSeccion del servicio
+        Seccion resultado = seccionService.guardarSeccion(seccion);
+         
+        // se verifica que el resultado no sea nulo y que tenga el ID y nombre esperados y que se guardó correctamente
         assertThat(resultado.getId()).isEqualTo(1L);
         assertThat(resultado.getNombre()).isEqualTo("Sección A");
         verify(seccionRepository).save(seccion);
@@ -60,17 +68,26 @@ public class SeccionServiceTest {
 
     @Test
     void testListarSecciones() {
+
+        //2 secciones simuladas
         Seccion s1 = new Seccion(1L, 1, 10, "Sección A", 30, 25, new ArrayList<>());
         Seccion s2 = new Seccion(2L, 2, 11, "Sección B", 40, 35, new ArrayList<>());
+        
+        //se simula que el repositorio retorna una lista con las 2 secciones
         List<Seccion> listaMock = List.of(s1, s2);
-
         when(seccionRepository.findAll()).thenReturn(listaMock);
-
+        
+        //se valida que el servicio retorna la lista esperada y se conrfirma que se llamó al repositorio
         List<Seccion> resultado = seccionService.obtenerTodas();
-
         assertThat(resultado).hasSize(2).contains(s1, s2);
         verify(seccionRepository).findAll();
     }
+
+
+
+
+
+    
 
 
 
@@ -79,8 +96,11 @@ public class SeccionServiceTest {
 
 @Test
 void testObtenerSeccionPorId() {
+    
     Seccion seccion = new Seccion(1L, 1, 10, "Sección A", 30, 25, new ArrayList<>());
-
+    
+    
+    // Simula que el repositorio encuentra la sección con ID 1
     when(seccionRepository.findById(1L)).thenReturn(Optional.of(seccion));
 
     Seccion resultado = seccionService.obtenerPorId(1L);
@@ -99,10 +119,11 @@ void testObtenerSeccionPorId() {
 void testEliminarSeccion() {
     Long id = 1L;
 
-    // No se necesita when(...) porque deleteById no retorna nada
+    
     seccionService.eliminarSeccion(id);
 
     verify(seccionRepository).deleteById(id);
+    //se verifica que efectivamente se llamó al método deleteById del repositorio con el ID correcto
 }
 
 
